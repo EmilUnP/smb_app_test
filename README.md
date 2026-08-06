@@ -26,8 +26,8 @@ npm run dev                  # http://localhost:3000
 | `SMB_API_BASE` | `https://api.kob.sinam.az` |
 | `AI_STUDIO_URL` | `https://ai-stduio-brain-space.vercel.app` |
 | `HANDOFF_SECRET` | same long secret as AI Studio |
-| `UPSTASH_REDIS_REST_URL` | from Upstash Redis |
-| `UPSTASH_REDIS_REST_TOKEN` | from Upstash Redis |
+
+Upstash Redis is **optional**. Without it, production uses signed handoff codes (60s TTL) sealed with `HANDOFF_SECRET`.
 
 4. Production URL: https://smb-app-test.vercel.app
 5. On **AI Studio** Vercel project set:

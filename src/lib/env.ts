@@ -19,7 +19,7 @@ export function assertBridgeProductionEnv(): void {
 }
 
 export function bridgeEnvSummary(): {
-  store: "upstash" | "memory";
+  store: "upstash" | "signed" | "memory";
   aiStudioUrl: string;
   smbApiBase: string;
   hasHandoffSecret: boolean;
