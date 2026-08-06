@@ -48,20 +48,25 @@ export async function GET(request: NextRequest) {
   <title>Opening AI Studio…</title>
   <style>
     body { font-family: system-ui, sans-serif; display: grid; place-items: center; min-height: 100vh; margin: 0; background: #f8fafc; color: #0f172a; }
-    p { color: #64748b; }
-    button { margin-top: 1rem; padding: 0.6rem 1rem; border-radius: 0.5rem; border: 0; background: #16a34a; color: white; font-weight: 600; cursor: pointer; }
+    p { color: #64748b; max-width: 28rem; text-align: center; }
+    code { font-size: 0.8rem; word-break: break-all; }
+    button { margin-top: 1rem; padding: 0.75rem 1.25rem; border-radius: 0.5rem; border: 0; background: #16a34a; color: white; font-weight: 600; cursor: pointer; font-size: 1rem; }
   </style>
 </head>
 <body>
-  <main>
+  <main style="display:grid;place-items:center;gap:0.5rem;padding:1.5rem">
     <h1>Opening AI Studio…</h1>
-    <p>If nothing happens, use the button below.</p>
+    <p>Sending you to <code>${escapeHtml(action)}</code></p>
     <form id="sso" method="POST" action="${escapeHtml(action)}">
       <input type="hidden" name="code" value="${escapeHtml(code)}" />
       <button type="submit">Continue to AI Studio</button>
     </form>
   </main>
-  <script>document.getElementById("sso").submit();</script>
+  <script>
+    setTimeout(function () {
+      document.getElementById("sso").submit();
+    }, 50);
+  </script>
 </body>
 </html>`;
 
