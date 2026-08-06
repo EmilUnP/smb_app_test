@@ -31,36 +31,7 @@ export default function LoginClient() {
 
       const returnTo = searchParams.get("returnTo");
       if (returnTo === "ai-studio") {
-        const handoff = await fetch("/api/handoff/create", { method: "POST" });
-        const handoffData = (await handoff.json()) as {
-          url?: string;
-          ssoUrl?: string;
-          code?: string;
-          error?: string;
-        };
-        if (!handoff.ok) {
-          setError(handoffData.error ?? "Could not open AI Studio");
-          return;
-        }
-        if (handoffData.code && (handoffData.ssoUrl || handoffData.url)) {
-          const form = document.createElement("form");
-          form.method = "POST";
-          form.action = handoffData.ssoUrl ?? handoffData.url!;
-          form.style.display = "none";
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = "code";
-          input.value = handoffData.code;
-          form.appendChild(input);
-          document.body.appendChild(form);
-          form.submit();
-          return;
-        }
-        if (!handoffData.url) {
-          setError(handoffData.error ?? "Could not open AI Studio");
-          return;
-        }
-        window.location.assign(handoffData.url);
+        window.location.assign("/api/handoff/launch");
         return;
       }
 

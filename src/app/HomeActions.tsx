@@ -151,54 +151,12 @@ export default function HomeActions({
     }
   };
 
-  const handleOpenAiStudio = async () => {
+  const handleOpenAiStudio = () => {
     setError(null);
     setIsOpening(true);
-    let navigating = false;
-    try {
-      const res = await fetch("/api/handoff/create", { method: "POST" });
-      const data = (await res.json()) as {
-        url?: string;
-        ssoUrl?: string;
-        code?: string;
-        usePost?: boolean;
-        error?: string;
-      };
-      if (!res.ok) {
-        setError(data.error ?? "Could not create handoff");
-        return;
-      }
-
-      // Sealed codes are too large for ?code= — POST into Studio /sso.
-      // Do not setState after submit: finally must not cancel navigation.
-      if (data.code && (data.ssoUrl || data.url)) {
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = data.ssoUrl ?? data.url!;
-        form.acceptCharset = "UTF-8";
-        form.style.display = "none";
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "code";
-        input.value = data.code;
-        form.appendChild(input);
-        document.body.appendChild(form);
-        navigating = true;
-        form.submit();
-        return;
-      }
-
-      if (!data.url) {
-        setError(data.error ?? "Could not create handoff");
-        return;
-      }
-      navigating = true;
-      window.location.assign(data.url);
-    } catch {
-      setError("Network error");
-    } finally {
-      if (!navigating) setIsOpening(false);
-    }
+    // Full page navigation to server-rendered auto-POST launch.
+    // Avoids fetch/React canceling the cross-site SSO submit.
+    window.location.assign("/api/handoff/launch");
   };
 
   const handleLogout = async () => {
