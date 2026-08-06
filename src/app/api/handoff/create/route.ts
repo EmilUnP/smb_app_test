@@ -31,11 +31,16 @@ export async function POST() {
     const aiStudioUrl =
       process.env.AI_STUDIO_URL?.replace(/\/$/, "") ?? "http://localhost:3001";
 
+    // Always POST the sealed code — encrypted tokens are too large for query URLs.
     return NextResponse.json({
-      url: `${aiStudioUrl}/sso?code=${encodeURIComponent(code)}`,
+      ssoUrl: `${aiStudioUrl}/sso`,
+      code,
+      // Keep url for older clients; prefer POST from the browser.
+      url: `${aiStudioUrl}/sso`,
+      usePost: true,
       warning: session.tenantId
         ? undefined
-        : "Opened without a tenant. Paste a tenant UUID on SMB home for Brain/ReferenceData.",
+        : "Opened without a tenant. Select a tenant for Brain/ReferenceData.",
     });
   } catch (error) {
     const message =

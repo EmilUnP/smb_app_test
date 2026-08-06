@@ -156,8 +156,35 @@ export default function HomeActions({
     setIsOpening(true);
     try {
       const res = await fetch("/api/handoff/create", { method: "POST" });
-      const data = (await res.json()) as { url?: string; error?: string };
-      if (!res.ok || !data.url) {
+      const data = (await res.json()) as {
+        url?: string;
+        ssoUrl?: string;
+        code?: string;
+        usePost?: boolean;
+        error?: string;
+      };
+      if (!res.ok) {
+        setError(data.error ?? "Could not create handoff");
+        return;
+      }
+
+      // Sealed codes are too large for ?code= — POST into Studio /sso.
+      if (data.usePost && data.code && (data.ssoUrl || data.url)) {
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = data.ssoUrl ?? data.url!;
+        form.style.display = "none";
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "code";
+        input.value = data.code;
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+        return;
+      }
+
+      if (!data.url) {
         setError(data.error ?? "Could not create handoff");
         return;
       }
