@@ -154,6 +154,7 @@ export default function HomeActions({
   const handleOpenAiStudio = async () => {
     setError(null);
     setIsOpening(true);
+    let navigating = false;
     try {
       const res = await fetch("/api/handoff/create", { method: "POST" });
       const data = (await res.json()) as {
@@ -169,10 +170,12 @@ export default function HomeActions({
       }
 
       // Sealed codes are too large for ?code= — POST into Studio /sso.
-      if (data.usePost && data.code && (data.ssoUrl || data.url)) {
+      // Do not setState after submit: finally must not cancel navigation.
+      if (data.code && (data.ssoUrl || data.url)) {
         const form = document.createElement("form");
         form.method = "POST";
         form.action = data.ssoUrl ?? data.url!;
+        form.acceptCharset = "UTF-8";
         form.style.display = "none";
         const input = document.createElement("input");
         input.type = "hidden";
@@ -180,6 +183,7 @@ export default function HomeActions({
         input.value = data.code;
         form.appendChild(input);
         document.body.appendChild(form);
+        navigating = true;
         form.submit();
         return;
       }
@@ -188,11 +192,12 @@ export default function HomeActions({
         setError(data.error ?? "Could not create handoff");
         return;
       }
-      window.location.href = data.url;
+      navigating = true;
+      window.location.assign(data.url);
     } catch {
       setError("Network error");
     } finally {
-      setIsOpening(false);
+      if (!navigating) setIsOpening(false);
     }
   };
 
