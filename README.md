@@ -4,7 +4,8 @@ Temporary login + tenant/company bootstrap + one-time SSO handoff into AI Studio
 
 This is **not** the real SMB product UI. Deploy it on its own Vercel project so it can talk to:
 
-**AI Studio:** https://ai-stduio-brain-space.vercel.app
+**AI Studio:** https://ai-stduio-brain-space.vercel.app  
+**This bridge (Vercel):** https://smb-app-test.vercel.app
 
 ## Local
 
@@ -28,16 +29,16 @@ npm run dev                  # http://localhost:3000
 | `UPSTASH_REDIS_REST_URL` | from Upstash Redis |
 | `UPSTASH_REDIS_REST_TOKEN` | from Upstash Redis |
 
-4. Copy this bridge’s production URL, e.g. `https://smb-sso-bridge.vercel.app`
+4. Production URL: https://smb-app-test.vercel.app
 5. On **AI Studio** Vercel project set:
-   - `SMB_APP_URL` = bridge URL  
+   - `SMB_APP_URL` = `https://smb-app-test.vercel.app`
    - `HANDOFF_SECRET` = same secret  
    - `OPENROUTER_API_KEY`, `SMB_API_BASE`, etc.  
    - Redeploy Studio
 
 ## Test
 
-1. Open bridge URL → login with real SMB user  
+1. Open https://smb-app-test.vercel.app → login with real SMB user  
 2. Select tenant + company  
 3. **Open AI Studio** → should land on Studio workspace (not `/welcome?sso=failed`)
 
